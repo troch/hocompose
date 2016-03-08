@@ -31,7 +31,7 @@ export const onMount = (behaviours, model) =>
                 return behaviour.onUnmount;
             }
         })
-        .filer(isFunc);
+        .filter(isFunc);
 
 
 export const buildDisplayName = (behaviours, BaseComponent) => {

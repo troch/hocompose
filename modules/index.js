@@ -3,7 +3,7 @@ import { collect, onConstruct, onMount, buildDisplayName, buildModel, isFunc } f
 
 const hocompose = (behaviours) => (BaseComponent) => {
     class Hocompose extends React.Component {
-        constructor(props, context) {
+        constructor(props, context = {}) {
             super(props, context);
             this.context = context;
             const model = { props, context };
@@ -20,7 +20,7 @@ const hocompose = (behaviours) => (BaseComponent) => {
 
         componentDidMount() {
             const model = buildModel(this);
-            this.unmountHandlers = onMount(model, this.setState);
+            this.unmountHandlers = onMount(behaviours, model, this.setState);
         }
 
         componentWillUnmount() {

@@ -2,18 +2,17 @@ import { expect } from 'chai';
 import createHoc from '../modules';
 import { render } from 'enzyme';
 import React from 'react';
-import { spy } from 'sinon';
 
 describe('onConstruct', () => {
     const customBehaviour1 = {
-        onConstruct: (props) => ({
+        onConstruct: () => ({
             message: 'Hello',
             _private: 'Thomas'
         })
     };
 
     const customBehaviour2 = {
-        onConstruct: (props) => ({
+        onConstruct: () => ({
             name: 'Thomas'
         })
     };
