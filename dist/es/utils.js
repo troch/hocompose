@@ -30,21 +30,35 @@ export var onMount = function onMount(behaviours, model) {
         if (isFunc(behaviour.onUnmount)) {
             return behaviour.onUnmount;
         }
-    }).filer(isFunc);
+    }).filter(isFunc);
 };
 
 export var buildDisplayName = function buildDisplayName(behaviours, BaseComponent) {
     var baseComponentDisplayName = BaseComponent.displayName || BaseComponent.name || 'Component';
-    var joinedBehaviours = behaviours.map(function (behaviour) {
-        return '[' + (behaviour.displayName || '_') + ']';
-    }).join('');
+    var joinedBehaviourNames = behaviours.map(function (behaviour) {
+        return behaviour.name || '?';
+    }).join(',');
 
-    return 'Hocompose' + joinedBehaviours + '(' + baseComponentDisplayName + ')';
+    return 'Hocompose[' + joinedBehaviourNames + '](' + baseComponentDisplayName + ')';
 };
 
-export var makeModel = function makeModel(_ref) {
+export var buildModel = function buildModel(_ref) {
     var props = _ref.props;
     var state = _ref.state;
     var context = _ref.context;
     return { props: props, state: state, context: context };
+};
+
+export var omitPrivate = function omitPrivate(state) {
+    return Object.keys(state).filter(function (key) {
+        return !/^_/.test(key);
+    }).reduce(function (acc, key) {
+        return babelHelpers.extends({}, acc, babelHelpers.defineProperty({}, key, state[key]));
+    }, {});
+};
+
+export var shallowEquals = function shallowEquals(left, right) {
+    return Object.keys(left).length === Object.keys(right).length && Object.keys(left).every(function (leftKey) {
+        return left[leftKey] === right[rightKey];
+    });
 };

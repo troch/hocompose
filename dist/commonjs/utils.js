@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var isFunc = exports.isFunc = function isFunc(prop) {
     return typeof prop === 'function';
 };
@@ -38,21 +40,35 @@ var onMount = exports.onMount = function onMount(behaviours, model) {
         if (isFunc(behaviour.onUnmount)) {
             return behaviour.onUnmount;
         }
-    }).filer(isFunc);
+    }).filter(isFunc);
 };
 
 var buildDisplayName = exports.buildDisplayName = function buildDisplayName(behaviours, BaseComponent) {
     var baseComponentDisplayName = BaseComponent.displayName || BaseComponent.name || 'Component';
-    var joinedBehaviours = behaviours.map(function (behaviour) {
-        return '[' + (behaviour.displayName || '_') + ']';
-    }).join('');
+    var joinedBehaviourNames = behaviours.map(function (behaviour) {
+        return behaviour.name || '?';
+    }).join(',');
 
-    return 'Hocompose' + joinedBehaviours + '(' + baseComponentDisplayName + ')';
+    return 'Hocompose[' + joinedBehaviourNames + '](' + baseComponentDisplayName + ')';
 };
 
-var makeModel = exports.makeModel = function makeModel(_ref) {
+var buildModel = exports.buildModel = function buildModel(_ref) {
     var props = _ref.props;
     var state = _ref.state;
     var context = _ref.context;
     return { props: props, state: state, context: context };
+};
+
+var omitPrivate = exports.omitPrivate = function omitPrivate(state) {
+    return Object.keys(state).filter(function (key) {
+        return !/^_/.test(key);
+    }).reduce(function (acc, key) {
+        return _extends({}, acc, _defineProperty({}, key, state[key]));
+    }, {});
+};
+
+var shallowEquals = exports.shallowEquals = function shallowEquals(left, right) {
+    return Object.keys(left).length === Object.keys(right).length && Object.keys(left).every(function (leftKey) {
+        return left[leftKey] === right[rightKey];
+    });
 };
