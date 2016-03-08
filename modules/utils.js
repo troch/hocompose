@@ -1,21 +1,31 @@
 export const isFunc = prop => typeof prop === 'function';
 
-export const collect = (prop, behaviours) =>
-    behaviours.reduce(
-        (acc, behaviour) => behaviour[prop]
-            ? { ...acc, ...behaviour[prop] }
-            : acc,
-        {}
-    );
+export const pluckFunc = behaviours => methodName =>
+    behaviours
+        .filter(behaviour => isFunc(behaviour[methodName]))
+        .map(behaviour => behaviour[methodName]);
+
+export const reduce = (list) =>
+    list.reduce((acc, obj) => ({ ...acc, ...obj }), {});
+
+export const collect = (prop, list) =>
+    reduce(list.map(item => item[prop] || {}));
+
+const constructBase = {
+    state: {},
+    share: {}
+};
 
 export const onConstruct = (behaviours, model) =>
     behaviours.map((behaviour) => {
         if (isFunc(behaviour.onConstruct)) {
+            const result = behaviour.onConstruct(model) || {};
             return {
-                state: behaviour.onConstruct(model)
+                ...constructBase,
+                ...result
             };
         }
-        return {};
+        return constructBase;
     });
 
 export const onMount = (behaviours, model) =>
@@ -43,12 +53,8 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
     return `Hocompose[${joinedBehaviourNames}](${baseComponentDisplayName})`;
 };
 
-export const buildModel = ({ props, state, context }) => ({ props, state, context });
-
-export const omitPrivate = (state) =>
-    Object.keys(state)
-        .filter(key => !/^_/.test(key))
-        .reduce((acc, key) => ({ ...acc, [key]: state[key] }), {});
+export const buildModel = ({ props, state, context }, extraValues = {}) =>
+    ({ props, state, context, ...extraValues });
 
 export const shallowEquals = (left, right) =>
     Object.keys(left).length === Object.keys(right).length &&

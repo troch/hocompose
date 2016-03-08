@@ -1,78 +1,92 @@
 import * as React from 'react';
-import { collect, onConstruct, onMount, buildDisplayName, buildModel, isFunc, omitPrivate } from './utils';
+import { reduce, collect, onConstruct, onMount, buildDisplayName, buildModel, pluckFunc } from './utils';
 
-const hocompose = (behaviours) => (BaseComponent) => {
-    class Hocompose extends React.Component {
-        constructor(props, context = {}) {
-            super(props, context);
-            this.context = context;
-            const model = { props, context };
-            this.state = collect('state', onConstruct(behaviours, model));
-        }
+const compose = (behaviours) => {
+    const get = pluckFunc(behaviours);
+    const handlers = {
+        getChildContext: get('getChildContext'),
+        onMount: get('onMount'),
+        shouldUpdate: get('shouldUpdate'),
+        beforeUpdate: get('beforeUpdate'),
+        afterUpdate: get('afterUpdate'),
+        onReceiveProps: get('onReceiveProps')
+    };
 
-        getChildContext() {
-            const getChildContextResults = behaviours
-                .filter(behaviours => isFunc(behaviours.getChildContext))
-                .map(behaviours => ({ getChildContext: behaviours.getChildContext(this.props) }));
+    return (BaseComponent) => {
+        class Hocompose extends React.Component {
+            constructor(props, context = {}) {
+                super(props, context);
+                this.context = context;
+                const model = { props, context };
 
-            return collect('getChildContext', getChildContextResults);
-        }
+                const onConstructResults = onConstruct(behaviours, model);
 
-        componentDidMount() {
-            const model = buildModel(this);
-            this.unmountHandlers = onMount(behaviours, model, this.setState);
-        }
-
-        componentWillUnmount() {
-            const model = buildModel(this);
-            this.unmountHandlers.reverse().forEach(onUnmount => onUnmount(model));
-        }
-
-        shouldComponentUpdate(nextProps, nextState) {
-            const shouldUpdateHandlers = behaviours
-                .filter(_ => isFunc(_.shouldUpdate));
-
-            if (shouldUpdateHandlers.length === 0) {
-                return true;
+                this.state = collect('state', onConstructResults);
+                this.share = collect('share', onConstructResults);
             }
 
-            const model = {
-                props: this.props,
-                state: this.state,
-                nextProps,
-                nextState
-            };
+            getChildContext() {
+                const getChildContextResults = handlers.getChildContext
+                    .map(fn => fn(this.props));
 
-            return shouldUpdateHandlers
-                .map(_ => _(model))
-                .some(_ => _ === true);
+                return reduce(getChildContextResults);
+            }
+
+            componentDidMount() {
+                const model = buildModel(this);
+
+                this.unmountHandlers = onMount(behaviours, model, this.setState, this.share);
+            }
+
+            componentWillUnmount() {
+                const model = buildModel(this);
+
+                this.unmountHandlers.reverse().forEach(onUnmount => onUnmount(model, this.share));
+            }
+
+            shouldComponentUpdate(nextProps, nextState) {
+                if (handlers.shouldUpdate.length === 0) {
+                    return true;
+                }
+
+                const model = buildModel(this, { nextProps, nextState });
+
+                return handlers.shouldUpdate
+                    .some(_ => _(model, this.share) === true);
+            }
+
+            componentWillReceiveProps(nextProps) {
+                const model = buildModel(this, { nextProps });
+
+                return handlers.onReceiveProps
+                    .forEach(_ => _(model, this.setState, this.share));
+            }
+
+            componentWillUpdate(nextProps, nextState) {
+                const model = buildModel(this, { nextProps, nextState });
+
+                return handlers.beforeUpdate
+                    .forEach(_ => _(model, this.share));
+            }
+
+            componentDidUpdate(prevProps, prevState) {
+                const model = buildModel(this, { prevProps, prevState });
+
+                return handlers.afterUpdate
+                    .forEach(_ => _(model, this.setState, this.share));
+            }
+
+            render() {
+                return React.createElement(BaseComponent, { ...this.props, ...this.state });
+            }
         }
 
-        componentDidUpdate(nextProps) {
-            const model = {
-                props: this.props,
-                state: this.state,
-                context: this.context,
-                nextProps
-            };
+        Hocompose.displayName = buildDisplayName(behaviours, BaseComponent);
+        Hocompose.contextTypes = collect('contextTypes', behaviours);
+        Hocompose.childContextTypes = collect('childContextTypes', behaviours);
 
-            return behaviours
-                .filter(_ => isFunc(_.onUpdate))
-                .forEach(_ => _(model, this.setState));
-        }
-
-        render() {
-            const stateToProps = omitPrivate(this.state);
-
-            return React.createElement(BaseComponent, { ...this.props, ...stateToProps });
-        }
-    }
-
-    Hocompose.displayName = buildDisplayName(behaviours, BaseComponent);
-    Hocompose.contextTypes = collect('contextTypes', behaviours);
-    Hocompose.childContextTypes = collect('childContextTypes', behaviours);
-
-    return Hocompose;
+        return Hocompose;
+    };
 };
 
-export default hocompose;
+export default compose;

@@ -1,12 +1,10 @@
-import { shallowEquals, omitPrivate } from './utils';
+import { shallowEquals } from './utils';
 
 export const pure = {
     name: 'pure',
 
     shouldUpdate(model) {
-        const { props, nextProps } = model;
-        const state = omitPrivate(model.state);
-        const nextState = omitPrivate(model.nextState);
+        const { props, nextProps, state, nextState } = model;
 
         return !shallowEquals(props, nextProps) || !shallowEquals(state, nextState);
     }
