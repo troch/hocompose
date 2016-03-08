@@ -1,0 +1,17 @@
+{
+    "plugins": [
+        "transform-object-rest-spread"
+    ],
+    "env": {
+        "development": {
+            "presets": [
+                "es2015"
+            ]
+        },
+        "es": {
+            "presets": [
+                "es2015-rollup"
+            ]
+        }
+    }
+}
