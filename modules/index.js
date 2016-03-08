@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { collect, onConstruct, onMount, buildDisplayName, makeModel, isFunc } from './utils';
+import { collect, onConstruct, onMount, buildDisplayName, buildModel, isFunc } from './utils';
 
 const hocompose = (behaviours) => (BaseComponent) => {
     class Hocompose extends React.Component {
@@ -19,12 +19,12 @@ const hocompose = (behaviours) => (BaseComponent) => {
         }
 
         componentDidMount() {
-            const model = makeModel(this);
+            const model = buildModel(this);
             this.unmountHandlers = onMount(model, this.setState);
         }
 
         componentWillUnmount() {
-            const model = makeMode(this);
+            const model = buildModel(this);
             this.unmountHandlers.reverse().forEach(onUnmount => onUnmount(model));
         }
 

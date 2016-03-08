@@ -36,11 +36,11 @@ export const onMount = (behaviours, model) =>
 
 export const buildDisplayName = (behaviours, BaseComponent) => {
     const baseComponentDisplayName = BaseComponent.displayName || BaseComponent.name || 'Component';
-    const joinedBehaviours = behaviours
-        .map(behaviour => `[${behaviour.displayName || '_'}]`)
-        .join('');
+    const joinedBehaviourNames = behaviours
+        .map(behaviour => behaviour.name || '?')
+        .join(',');
 
-    return `Hocompose${joinedBehaviours}(${baseComponentDisplayName})`;
+    return `Hocompose[${joinedBehaviourNames}](${baseComponentDisplayName})`;
 };
 
-export const makeModel = ({ props, state, context }) => ({ props, state, context });
+export const buildModel = ({ props, state, context }) => ({ props, state, context });

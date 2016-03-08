@@ -29,7 +29,7 @@
     "react": "~0.14.0"
   },
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register --require test/test_helper.js --recursive 'test/main.js'",
+    "test": "mocha --compilers js:babel-core/register --require test_helper.js --recursive 'test/*.js'",
     "build": "rimraf dist && npm run build:es && npm run build:cjs",
     "build:es": "BABEL_ENV=es babel modules --out-dir dist/es",
     "build:cjs": "babel modules --out-dir dist/commonjs",

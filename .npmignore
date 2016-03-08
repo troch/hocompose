@@ -4,3 +4,4 @@ test
 node_modules
 npm-debug.log
 *.md
+test_helper.js
