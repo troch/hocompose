@@ -1,19 +1,23 @@
 import { expect } from 'chai';
 import createHoc from '../modules';
+import { onConstruct, collect } from '../modules/utils';
 import { render } from 'enzyme';
 import React from 'react';
 
 describe('onConstruct', () => {
     const customBehaviour1 = {
         onConstruct: () => ({
-            message: 'Hello',
-            _private: 'Thomas'
+            state: {
+                message: 'Hello'
+            }
         })
     };
 
     const customBehaviour2 = {
         onConstruct: () => ({
-            name: 'Thomas'
+            state: {
+                name: 'Thomas'
+            }
         })
     };
 
@@ -21,18 +25,20 @@ describe('onConstruct', () => {
         return <div>{ `${props.message} ${props.name}${props._private || ''}` }</div>;
     }
 
+    it('should compose onConstruct results', () => {
+        const onConstructRes = onConstruct([ customBehaviour1, customBehaviour2 ], {}, {});
+        const actual = collect('state', onConstructRes);
+
+        expect(actual).to.eql({
+            message: 'Hello',
+            name: 'Thomas'
+        });
+    });
+
     it('should inject state into props', () => {
         const EnhancedComponent = createHoc([ customBehaviour1, customBehaviour2 ])(Component);
         const output = render(<EnhancedComponent />);
 
         expect(output.find('div').text()).to.equal('Hello Thomas');
-    });
-
-    it('should not inject private state values', () => {
-        const MyComponent = props => <div>{ `${props.message} ${props._private || ''}` }</div>;
-        const EnhancedComponent = createHoc([ customBehaviour1 ])(MyComponent);
-
-        const output = render(<EnhancedComponent />);
-        expect(output.find('div').text()).to.equal('Hello ');
     });
 });

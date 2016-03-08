@@ -7,7 +7,9 @@ import React from 'react';
 describe('onMount', () => {
     const customBehaviour = {
         onConstruct: () => ({
-            a: 1
+            state: {
+                a: 1
+            }
         }),
         onMount: () => {}
     };
