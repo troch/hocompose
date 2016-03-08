@@ -29,20 +29,26 @@ const hocompose = (behaviours) => (BaseComponent) => {
         }
 
         shouldComponentUpdate(nextProps, nextState) {
-            const model = {
-                props: this.props,
-                state: this.state,
-                nextProps,
-                nextState
-            };
+            const shouldUpdateHandlers = behaviours
+                .filter(_ => isFunc(_.shouldUpdate));
 
-            return behaviours
-                .filter(_ => isFunc(_.shouldUpdate))
-                .map(_ => _(model))
-                .some(_ => _ === true);
+            if (shouldUpdateHandlers.length === 0) {
+                return true;
+            } else {
+                const model = {
+                    props: this.props,
+                    state: this.state,
+                    nextProps,
+                    nextState
+                };
+
+                return shouldUpdateHandlers
+                    .map(_ => _(model))
+                    .some(_ => _ === true);
+            }
         }
 
-        componentWillUpdate(nextProps) {
+        componentDidUpdate(nextProps) {
             const model = {
                 props: this.props,
                 state: this.state,
