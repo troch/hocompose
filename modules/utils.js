@@ -22,10 +22,16 @@ export const onMount = (behaviours, model) =>
     behaviours
         .map((behaviour) => {
             if (isFunc(behaviour.onMount)) {
-                return behaviour.onMount(model);
+                const onUnmount = behaviour.onMount(model);
+                if (isFunc(onUnmount)) {
+                    return onUnmount;
+                }
+            }
+            if (isFunc(behaviour.onUnmount)) {
+                return behaviour.onUnmount;
             }
         })
-        .filter(_ => typeof _ === 'function');
+        .filer(isFunc);
 
 
 export const buildDisplayName = (behaviours, BaseComponent) => {

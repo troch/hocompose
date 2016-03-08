@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { collect, onConstruct, onMount, buildDisplayName, makeModel } from './utils';
+import { collect, onConstruct, onMount, buildDisplayName, makeModel, isFunc } from './utils';
 
 const hocompose = (behaviours) => (BaseComponent) => {
     class Hocompose extends React.Component {
@@ -8,6 +8,14 @@ const hocompose = (behaviours) => (BaseComponent) => {
             this.context = context;
             const model = { props, context };
             this.state = collect('state', onConstruct(behaviours, model));
+        }
+
+        getChildContext() {
+            const getChildContextResults = behaviours
+                .filter(behaviours => isFunc(behaviours.getChildContext))
+                .map(behaviours => ({ getChildContext: behaviours.getChildContext(this.props) }))
+
+            return collect('getChildContext', getChildContextResults);
         }
 
         componentDidMount() {
@@ -49,14 +57,14 @@ const hocompose = (behaviours) => (BaseComponent) => {
 
         render() {
             const stateToProps = Object.keys(this.state)
-                .filter(!/^_/.test)
-                .map(key => this.state[key]);
+                .filter(key => !/^_/.test(key))
+                .reduce((acc, key) => ({ ...acc, [key]: this.state[key] }), {});
 
             return React.createElement(BaseComponent, { ...this.props, ...stateToProps });
         }
     }
 
-    Hocompose.displayName = buildDisplayName(behaviours);
+    Hocompose.displayName = buildDisplayName(behaviours, BaseComponent);
     Hocompose.contextTypes = collect('contextTypes', behaviours);
     Hocompose.childContextTypes = collect('childContextTypes', behaviours);
 
