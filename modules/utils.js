@@ -44,3 +44,12 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
 };
 
 export const buildModel = ({ props, state, context }) => ({ props, state, context });
+
+export const omitPrivate = (state) =>
+    Object.keys(state)
+        .filter(key => !/^_/.test(key))
+        .reduce((acc, key) => ({ ...acc, [key]: state[key] }), {});
+
+export const shallowEquals = (left, right) =>
+    Object.keys(left).length === Object.keys(right).length &&
+    Object.keys(left).every(leftKey => left[leftKey] === right[rightKey]);
