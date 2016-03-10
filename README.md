@@ -1,6 +1,10 @@
 # hocompose
 
-> A library to compose higher-order components into one. 
+> A library to compose higher-order components into one.
+
+---
+__Not published yet, I'm still thinking about the API__
+---
 
 Using Higher-Order Components in React is great for composition: they allow to decouple rendering logic from lifecycle logic.
 
@@ -50,6 +54,7 @@ const myBehaviour = {
         }
     }
 };
+```
 
 State properties will be injected alongside props to your base component.
 
