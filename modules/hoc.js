@@ -81,6 +81,8 @@ const compose = (behaviours) => (BaseComponent) => {
     Hocompose.displayName = buildDisplayName(behaviours, BaseComponent);
     Hocompose.contextTypes = collect('contextTypes', behaviours);
     Hocompose.childContextTypes = collect('childContextTypes', behaviours);
+    Hocompose.defaultProps = collect('defaultProps', behaviours.concat(BaseComponent));
+    Hocompose.propTypes = collect('propTypes', behaviours.concat(BaseComponent));
 
     return Hocompose;
 };

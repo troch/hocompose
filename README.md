@@ -2,12 +2,6 @@
 
 > A library to compose higher-order components into one.
 
-***
-
-__Not published yet, I'm still thinking about the API__
-
-***
-
 Using Higher-Order Components in React is great for composition: they allow to decouple rendering logic from lifecycle logic.
 
 However, you can quickly pile them up and they can slow down your application by multiplying the number of React component instances your application has to handle.
@@ -48,6 +42,9 @@ const windowResize = (model) => {
         height: window.innerHeight
     });
 
+
+    // Because this will be returned when a component is instanciated,
+    // properties like contextTypes, childrenContextTypes, etc... will be ignored
     return {
         state: buildState(),
         onMount(model, setState) {
@@ -59,10 +56,28 @@ const windowResize = (model) => {
             return () => window.removeEventListener('resize', resizeHandler);
         }
     };
-});
+};
 ```
 
 ```js
+// Behaviour as a plain object
+const windowResize = {
+    state: {
+        width: window.innerWidth,
+        height: window.innerHeight
+    },
+    onMount(model, setState) {
+        const resizeHandler = () => setState({
+            width: window.innerWidth,
+            height: window.innerHeight
+        });
+
+        window.addEventListener('resize', resizeHandler);
+
+        // Return an unmount function
+        return () => window.removeEventListener('resize', resizeHandler);
+    }
+};
 
 ```
 
@@ -130,6 +145,14 @@ Exactly like `getChildContext`.
 #### `contextTypes`
 
 Exactly like `contextTypes`.
+
+#### `propTypes`
+
+Exactly like `propTypes`. Prop types from the supplied base component will be hoisted to the created higher-order component.
+
+#### `defaultProps`
+
+Exactly like `defaultProps` (not like `getDefaultProps`). Default prop types defined by the supplied base component will be hoisted to the created higher-order component.
 
 #### `name: String`
 
