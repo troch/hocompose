@@ -4,7 +4,9 @@
 
 Using Higher-Order Components in React is great for composition: they allow to decouple rendering logic from lifecycle logic.
 
-However, you can quickly pile them up and they can slow down your application by multiplying the number of React component instances your application has to handle.
+However, you can quickly pile them up and they _could_ have an impact on your application performance by multiplying the number of React component instances your application has to create and handle. I used the word _could_ because I don't have any figure or benchmark to back that claim. It was mentioned in a video that it was a concern for Netflix (missing ref).
+
+Whether or not too many higher-order components are bad for performance, why should we create a component instance for each additional behaviour we want to add to a component? Nested rendering logic makes sense, but nesting behaviours not always.
 
 __hocompose__ allows you to compose behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
 
@@ -30,9 +32,12 @@ createHoc([ behaviour1, behaviour2, ... ])(BaseComponent);
 
 Three behaviours are available: `setContext`, `getContext` and `pure`.
 
+```js
+import { setContext, getContext, pure } from 'hocompose';
+```
+
 
 ## Examples of behaviours
-
 
 ```js
 // Behaviour as a function
@@ -102,7 +107,7 @@ const myBehaviour = {
 };
 ```
 
-State properties will be injected alongside props to your base component.
+State properties will be serialised to props and passed to your base component.
 
 #### `onMount: (model: Object, setState: Function) => ?Function`
 
