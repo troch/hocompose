@@ -2,9 +2,11 @@
 
 > A library to compose higher-order components into one.
 
----
+***
+
 __Not published yet, I'm still thinking about the API__
----
+
+***
 
 Using Higher-Order Components in React is great for composition: they allow to decouple rendering logic from lifecycle logic.
 
@@ -30,16 +32,48 @@ import createHoc from 'hocompose';
 createHoc([ behaviour1, behaviour2, ... ])(BaseComponent);
 ```
 
-`createHoc` accepts an array of behaviours. __behaviours__ are simple plain JavaScript objects containing properties and lifecycle methods.
+`createHoc` accepts an array of behaviours. __behaviours__ are functions or simple plain JavaScript objects containing properties and lifecycle methods.
 
-Three behaviours are available
+Three behaviours are available: `setContext`, `getContext` and `pure`.
 
+
+## Examples of behaviours
+
+
+```js
+// Behaviour as a function
+const windowResize = (model) => {
+    const buildState = () => ({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
+
+    return {
+        state: buildState(),
+        onMount(model, setState) {
+            const resizeHandler = () => setState(buildState());
+
+            window.addEventListener('resize', resizeHandler);
+
+            // Return an unmount function
+            return () => window.removeEventListener('resize', resizeHandler);
+        }
+    };
+});
+```
+
+```js
+
+```
 
 ## API
 
+Behaviours can be plain objects or functions. If a function is supplied, it will treated as an `onConstruct` method (see below). It can return an object with lifecycle methods and an initial state (factory).
+
+
 #### `onConstruct: (model: Object) => ?Object`
 
-`onConstruct` is equivalent to constructors of ES6 classes or `componentWillMount` lifecycle method. You can optionally return a plain object containing a `state` and `share` property. If supplied, the `state` object will be your initial state. `share` is an object which will be passed around other lifecycle methods and that you can freely mutate if you wish to.
+`onConstruct` is equivalent to constructors of ES6 classes or `componentWillMount` lifecycle method. You can optionally return a plain object containing a `state` property. If supplied, the `state` object will be your initial state. If you need to specify an initial state, you don't have to define an `onConstruct` method, you can simply specify a `state` property on your behaviour.
 
 ```js
 const myBehaviour = {
@@ -47,9 +81,6 @@ const myBehaviour = {
         return {
             state: {
                 count: 0
-            },
-            share: {
-                cache: {}
             }
         }
     }
@@ -58,31 +89,35 @@ const myBehaviour = {
 
 State properties will be injected alongside props to your base component.
 
-#### `onMount: (model: Object, setState: Function, share: Object) => ?Function`
+#### `onMount: (model: Object, setState: Function) => ?Function`
 
 `onMount` will be invoked when a component did mount. `model` contains `props`, `state` and `context` properties. Mounting functions are called in the order the behaviours are declared, and they can return an `onUnmount` function. Unmounting functions will be invoked in the reverse order.
 
-#### `onUmount: (model: Object, share: Object)`
+#### `onUmount: (model: Object)`
 
-_`componentWillUnmount`_: `model` contains `props`, `state` and `context` properties. Unmounting functions are invoked in the reverse order behaviours are declared. Unmounting functions can be defined in a behaviour, or returned by an `onMount` handler. If both, the handler returned by `onMount` will be used.
+_componentWillUnmount_: `model` contains `props`, `state` and `context` properties. Unmounting functions are invoked in the reverse order behaviours are declared. Unmounting functions can be defined in a behaviour, or returned by an `onMount` handler. If both, the handler returned by `onMount` will be used.
 
 Being able to return an unmounting handler is perfect for components which need to set-up things and then clean them up when being unmounted (like subscriptions to a store, a stream, an event...).
 
-#### `shouldUpdate: (model: Object, share: Object)`
+#### `shouldUpdate: (model: Object)`
 
-_`componentShouldUpdate`_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties, and `shouldUpdate` functions should return true or false. If no behaviours implements a `shouldUpdate` method, updates will always proceed by default. If one behaviour or more implements `shouldUpdate`, updates will proceed if at least one of them returns `true`.
+_componentShouldUpdate_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties, and `shouldUpdate` functions should return true or false. If no behaviours implements a `shouldUpdate` method, updates will always proceed by default. If one behaviour or more implements `shouldUpdate`, updates will proceed if at least one of them returns `true`.
 
-#### `onReceiveProps: (model: Object, setState: Function, share: Object)`
+#### `onReceiveProps: (model: Object, setState: Function)`
 
-_`componentWillReveiveProps`_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
+_componentWillReveiveProps_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
 
-#### `beforeUpdate: (model: Object, share: Object)`
+#### `beforeUpdate: (model: Object)`
 
-_`componentWillUpdate`_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
+_componentWillUpdate_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
 
-#### `afterUpdate: (model: Object, setState: Function, share: Object)`
+#### `afterUpdate: (model: Object, setState: Function)`
 
-_`componentDidUpdate`_: `model` contains `props`, `state`, `context`, `prevProps`, `prevState` properties.
+_componentDidUpdate_: `model` contains `props`, `state`, `context`, `prevProps`, `prevState` properties.
+
+#### `state: Object`
+
+An initial state object. If an `onConstruct` method returns an object with a `state` property, it will be used rather than the initial state specified on the behaviour itself. 
 
 #### `childContextTypes: Object`
 

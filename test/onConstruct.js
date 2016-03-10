@@ -21,12 +21,18 @@ describe('onConstruct', () => {
         })
     };
 
+    const customBehaviour3 = () => ({
+        state: {
+            city: 'Glasgow'
+        }
+    });
+
     function Component(props) {
         return <div>{ `${props.message} ${props.name}${props._private || ''}` }</div>;
     }
 
     it('should compose onConstruct results', () => {
-        const onConstructRes = onConstruct([ customBehaviour1, customBehaviour2 ], {}, {});
+        const onConstructRes = [ customBehaviour1, customBehaviour2 ].map(b => b.onConstruct());
         const actual = collect('state', onConstructRes);
 
         expect(actual).to.eql({
@@ -40,5 +46,16 @@ describe('onConstruct', () => {
         const output = render(<EnhancedComponent />);
 
         expect(output.find('div').text()).to.equal('Hello Thomas');
+    });
+
+    it('should handle behaviours as functions', () => {
+        const behaviours = onConstruct([ customBehaviour1, customBehaviour2, customBehaviour3 ], {});
+        const state = collect('state', behaviours);
+
+        expect(state).to.eql({
+            message: 'Hello',
+            name: 'Thomas',
+            city: 'Glasgow'
+        });
     });
 });

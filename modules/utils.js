@@ -11,22 +11,17 @@ export const reduce = (list) =>
 export const collect = (prop, list) =>
     reduce(list.map(item => item[prop] || {}));
 
-const constructBase = {
-    state: {},
-    share: {}
-};
-
 export const onConstruct = (behaviours, model) =>
-    behaviours.map((behaviour) => {
-        if (isFunc(behaviour.onConstruct)) {
-            const result = behaviour.onConstruct(model) || {};
-            return {
-                ...constructBase,
-                ...result
-            };
-        }
-        return constructBase;
-    });
+    behaviours
+        .map(behaviour => {
+            if (typeof behaviour === 'function') {
+                return behaviour(model) || {};
+            }
+            if (typeof behaviour.onConstruct === 'function') {
+                return { ... behaviour, ...behaviour.onConstruct(model) || {} };
+            }
+            return behaviour;
+        });
 
 export const onMount = (behaviours, model) =>
     behaviours

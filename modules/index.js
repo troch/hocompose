@@ -1,5 +1,5 @@
 import createHoc from './hoc';
-import { pure } from './behaviours';
+import { pure, setContext, getContext } from './behaviours';
 
 export default createHoc;
-export { pure };
+export { pure, setContext, getContext };
