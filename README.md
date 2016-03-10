@@ -147,15 +147,15 @@ Exactly like `childContextTypes`.
 
 Exactly like `getChildContext`.
 
-#### `contextTypes`
+#### `contextTypes: Object`
 
 Exactly like `contextTypes`.
 
-#### `propTypes`
+#### `propTypes: Object`
 
 Exactly like `propTypes`. Prop types from the supplied base component will be hoisted to the created higher-order component.
 
-#### `defaultProps`
+#### `defaultProps: Object`
 
 Exactly like `defaultProps` (not like `getDefaultProps`). Default prop types defined by the supplied base component will be hoisted to the created higher-order component.
 
