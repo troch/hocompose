@@ -1,17 +1,17 @@
 # Why hocompose?
 
-Hocompose is a tiny library 
-
 ## Higher-order components
 
-Using Higher-Order Components (HOCs) in React is great for composition: they allow to decouple rendering logic from lifecycle logic.
+Using Higher-Order Components (HOCs) in React is great for composition. They allow to decouple rendering logic from life-cycle logic. HOCs are good for extracting logic from components, so it can be applied to other components without duplicating code.
 
-HOCs are very good for extracting any component logic which is not part of its rendering, and share it with different components, without repeating code. However, if sharing a specific component behaviour between many components is easy with HOCs, adding multiple behaviours to a component is done at the expense of new component instances because of nesting.
+In general, there are two types of higher-order components:
+- Some will specify life-cycle methods and render DOM element, wrapping a base component
+- Some will only specify life-cycle methods to add some behaviour to a base component
 
-## 
+Sharing a specific component behaviour between many components is easy with higher-order componentss. However, because of nesting, adding multiple behaviours to a component is done at the expense of component instances.
 
-Nesting rendering logic makes total sense, this is how one builds a UI. But, why should one follow the same pattern to apply a list of behaviours to a component? Adding component instances 
+## Composition
 
+Nesting rendering logic makes total sense, this is how one builds a UI. But, why should one follow the same pattern to apply a list of behaviours to a component?
 
-
-__hocompose__ allows you to compose behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
+This is what __hocompose__ enables: composing behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
