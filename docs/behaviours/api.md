@@ -12,8 +12,8 @@ __hocompose__ methods are named differently than the React ones to avoid any con
 | `componentWillReceiveProps(nextProps)` | `onReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context`
 | `shouldComponentUpdate(nextProps, nextState)` | `shouldUpdate(model)` | `props`, `nextProps`, `state`, `nextState`,  `context` |
 | `componentWillUpdate(nextProps, nextState)` | `beforeUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `context` |
-| `componentDidUpdate(prevProps, prevState)` | `afterUpdate` | `props`, `prevProps`, `state`, `prevState`, `context` |
-| `getChildContext()` | `getChildContext(model)` | `props`, `state`, `context` |
+| `componentDidUpdate(prevProps, prevState)` | `afterUpdate(model, setState)` | `props`, `prevProps`, `state`, `prevState`, `context` |
+| `getChildContext()` | `getChildContext(props)` | |
 
 ## Properties
 
