@@ -1,4 +1,5 @@
 # Summary
 
-* [Introduction](docs/introduction.md)
+* [Introduction](README.md)
+* [Why hocompose?](docs/introduction.md)
 
