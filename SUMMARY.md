@@ -2,6 +2,6 @@
 
 * [Introduction](README.md)
 * [Why hocompose?](docs/introduction.md)
-* Behaviours
+* [Behaviours](docs/behaviours/definition.md)
    * Definition
 
