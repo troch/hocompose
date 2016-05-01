@@ -11,14 +11,11 @@ export const reduce = (list) =>
 export const collect = (prop, list) =>
     reduce(list.map(item => item[prop] || {}));
 
-export const onConstruct = (behaviours, model) =>
+export const resolveBehaviours = (behaviours, model) =>
     behaviours
         .map(behaviour => {
             if (typeof behaviour === 'function') {
                 return behaviour(model) || {};
-            }
-            if (typeof behaviour.onConstruct === 'function') {
-                return { ... behaviour, ...behaviour.onConstruct(model) || {} };
             }
             return behaviour;
         });

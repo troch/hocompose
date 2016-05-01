@@ -88,20 +88,20 @@ const windowResize = {
 
 ## API
 
-Behaviours can be plain objects or functions. If a function is supplied, it will treated as an `onConstruct` method (see below). It can return an object with lifecycle methods and an initial state (factory).
+Behaviours can be plain objects or functions. If a function is supplied, it will treated as an `componentWillMount` method (or ES6 class constructor). It can return an object with lifecycle methods and an initial state (factory).
 
 
-#### `onConstruct: (model: Object) => ?Object`
+#### `behaviour: (model: Object) => Object`
 
-`onConstruct` is equivalent to constructors of ES6 classes or `componentWillMount` lifecycle method. You can optionally return a plain object containing a `state` property. If supplied, the `state` object will be your initial state. If you need to specify an initial state, you don't have to define an `onConstruct` method, you can simply specify a `state` property on your behaviour.
+When using a factory function, it will receive a `model` object containing `props` and `context` properties. It should return an object with at least one of the following methods and properties
 
 ```js
-const myBehaviour = {
-    onConstruct(model) {
-        return {
-            state: {
-                count: 0
-            }
+const myBehaviour = (model) => {
+    const { props } = model;
+
+    return {
+        state: {
+            count: props.initialCount
         }
     }
 };
