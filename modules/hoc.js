@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { reduce, collect, onMount, buildDisplayName, buildModel, pluckFunc, onConstruct } from './utils';
+import { reduce, collect, onMount, buildDisplayName, buildModel, pluckFunc, resolveBehaviours } from './utils';
 
 const compose = (behaviours) => (BaseComponent) => {
     class Hocompose extends React.Component {
@@ -8,7 +8,7 @@ const compose = (behaviours) => (BaseComponent) => {
             this.context = context;
             const model = { props, context };
 
-            const resolvedBehaviours = onConstruct(behaviours, model);
+            const resolvedBehaviours = resolveBehaviours(behaviours, model);
 
             const get = pluckFunc(resolvedBehaviours);
             this.handlers = {
@@ -23,8 +23,10 @@ const compose = (behaviours) => (BaseComponent) => {
         }
 
         getChildContext() {
+            const model = buildModel(this);
+
             const getChildContextResults = this.handlers.getChildContext
-                .map(fn => fn(this.props));
+                .map(_ => _(model));
 
             return reduce(getChildContextResults);
         }

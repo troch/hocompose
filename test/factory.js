@@ -1,25 +1,21 @@
 import { expect } from 'chai';
 import createHoc from '../modules';
-import { onConstruct, collect } from '../modules/utils';
+import { resolveBehaviours, collect } from '../modules/utils';
 import { render } from 'enzyme';
 import React from 'react';
 
-describe('onConstruct', () => {
-    const customBehaviour1 = {
-        onConstruct: () => ({
-            state: {
-                message: 'Hello'
-            }
-        })
-    };
+describe('Behaviour as factory', () => {
+    const customBehaviour1 = () => ({
+        state: {
+            message: 'Hello'
+        }
+    });
 
-    const customBehaviour2 = {
-        onConstruct: () => ({
-            state: {
-                name: 'Thomas'
-            }
-        })
-    };
+    const customBehaviour2 = () => ({
+        state: {
+            name: 'Thomas'
+        }
+    });
 
     const customBehaviour3 = () => ({
         state: {
@@ -32,8 +28,8 @@ describe('onConstruct', () => {
     }
 
     it('should compose onConstruct results', () => {
-        const onConstructRes = [ customBehaviour1, customBehaviour2 ].map(b => b.onConstruct());
-        const actual = collect('state', onConstructRes);
+        const factoryRes = [ customBehaviour1, customBehaviour2 ].map(b => b());
+        const actual = collect('state', factoryRes);
 
         expect(actual).to.eql({
             message: 'Hello',
@@ -49,7 +45,7 @@ describe('onConstruct', () => {
     });
 
     it('should handle behaviours as functions', () => {
-        const behaviours = onConstruct([ customBehaviour1, customBehaviour2, customBehaviour3 ], {});
+        const behaviours = resolveBehaviours([ customBehaviour1, customBehaviour2, customBehaviour3 ], {});
         const state = collect('state', behaviours);
 
         expect(state).to.eql({

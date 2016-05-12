@@ -6,11 +6,9 @@ import React from 'react';
 
 describe('onMount', () => {
     const customBehaviour = {
-        onConstruct: () => ({
-            state: {
-                a: 1
-            }
-        }),
+        state: {
+            a: 1
+        },
         onMount: () => {}
     };
 
@@ -26,6 +24,7 @@ describe('onMount', () => {
         const model = {
             state: { a: 1 },
             props: { b: 2 },
+            refs: {},
             context: {}
         };
 

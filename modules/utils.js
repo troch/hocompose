@@ -11,14 +11,11 @@ export const reduce = (list) =>
 export const collect = (prop, list) =>
     reduce(list.map(item => item[prop] || {}));
 
-export const onConstruct = (behaviours, model) =>
+export const resolveBehaviours = (behaviours, model) =>
     behaviours
         .map(behaviour => {
             if (typeof behaviour === 'function') {
                 return behaviour(model) || {};
-            }
-            if (typeof behaviour.onConstruct === 'function') {
-                return { ... behaviour, ...behaviour.onConstruct(model) || {} };
             }
             return behaviour;
         });
@@ -48,8 +45,8 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
     return `Hocompose[${joinedBehaviourNames}](${baseComponentDisplayName})`;
 };
 
-export const buildModel = ({ props, state, context }, extraValues = {}) =>
-    ({ props, state, context, ...extraValues });
+export const buildModel = ({ props, state, context, refs }, extraValues = {}) =>
+    ({ props, state, context, refs, ...extraValues });
 
 export const shallowEquals = (left, right) =>
     Object.keys(left).length === Object.keys(right).length &&
