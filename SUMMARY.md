@@ -8,4 +8,5 @@
 * [Examples](docs/examples/index.md)
    * [Event subscription](docs/examples/event-subscription.md)
    * [Event handlers](docs/examples/event-handlers.md)
+   * Redux store subscription
 
