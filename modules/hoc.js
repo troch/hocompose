@@ -23,8 +23,10 @@ const compose = (behaviours) => (BaseComponent) => {
         }
 
         getChildContext() {
+            const model = buildModel(this);
+
             const getChildContextResults = this.handlers.getChildContext
-                .map(fn => fn(this.props));
+                .map(_ => _(model));
 
             return reduce(getChildContextResults);
         }
