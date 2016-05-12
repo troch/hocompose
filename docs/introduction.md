@@ -12,6 +12,6 @@ Sharing a specific component behaviour between many components is easy with high
 
 ## Composition
 
-Nesting rendering logic makes total sense, this is how one builds a UI. But, why should one follow the same pattern to apply a list of behaviours to a component?
+Nesting rendering logic makes total sense, this is how one builds a UI consisting of a tree of components. But, why should one follow the same pattern to add a series of behaviours to a component?
 
 This is what __hocompose__ enables: composing behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
