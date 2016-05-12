@@ -2,6 +2,8 @@
 
 __hocompose__ methods are named differently than the React ones to avoid any confusion, since their arguments are different (due to the absence of context).
 
+## Creating a behaviour
+
 ## Methods
 
 | React | Hocompose | Model |
