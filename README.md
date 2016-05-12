@@ -115,25 +115,25 @@ State properties will be serialised to props and passed to your base component.
 
 #### `onUmount: (model: Object)`
 
-_componentWillUnmount_: `model` contains `props`, `state` and `context` properties. Unmounting functions are invoked in the reverse order behaviours are declared. Unmounting functions can be defined in a behaviour, or returned by an `onMount` handler. If both, the handler returned by `onMount` will be used.
+_componentWillUnmount_: `model` contains `props`, `state`, `refs` and `context` properties. Unmounting functions are invoked in the reverse order behaviours are declared. Unmounting functions can be defined in a behaviour, or returned by an `onMount` handler. If both, the handler returned by `onMount` will be used.
 
 Being able to return an unmounting handler is perfect for components which need to set-up things and then clean them up when being unmounted (like subscriptions to a store, a stream, an event...).
 
 #### `shouldUpdate: (model: Object)`
 
-_componentShouldUpdate_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties, and `shouldUpdate` functions should return true or false. If no behaviours implements a `shouldUpdate` method, updates will always proceed by default. If one behaviour or more implements `shouldUpdate`, updates will proceed if at least one of them returns `true`.
+_componentShouldUpdate_: `model` contains `props`, `state`, `refs`, `context`, `nextProps`, `nextState` properties, and `shouldUpdate` functions should return true or false. If no behaviours implements a `shouldUpdate` method, updates will always proceed by default. If one behaviour or more implements `shouldUpdate`, updates will proceed if at least one of them returns `true`.
 
 #### `onReceiveProps: (model: Object, setState: Function)`
 
-_componentWillReveiveProps_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
+_componentWillReveiveProps_: `model` contains `props`, `state`, `refs`, `context`, `nextProps`, `nextState` properties.
 
 #### `beforeUpdate: (model: Object)`
 
-_componentWillUpdate_: `model` contains `props`, `state`, `context`, `nextProps`, `nextState` properties.
+_componentWillUpdate_: `model` contains `props`, `state`, `refs`, `context`, `nextProps`, `nextState` properties.
 
 #### `afterUpdate: (model: Object, setState: Function)`
 
-_componentDidUpdate_: `model` contains `props`, `state`, `context`, `prevProps`, `prevState` properties.
+_componentDidUpdate_: `model` contains `props`, `state`, `refs`, `context`, `prevProps`, `prevState` properties.
 
 #### `state: Object`
 

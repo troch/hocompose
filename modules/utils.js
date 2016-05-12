@@ -45,8 +45,8 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
     return `Hocompose[${joinedBehaviourNames}](${baseComponentDisplayName})`;
 };
 
-export const buildModel = ({ props, state, context }, extraValues = {}) =>
-    ({ props, state, context, ...extraValues });
+export const buildModel = ({ props, state, context, refs }, extraValues = {}) =>
+    ({ props, state, context, refs, ...extraValues });
 
 export const shallowEquals = (left, right) =>
     Object.keys(left).length === Object.keys(right).length &&

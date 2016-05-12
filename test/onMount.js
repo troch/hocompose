@@ -24,6 +24,7 @@ describe('onMount', () => {
         const model = {
             state: { a: 1 },
             props: { b: 2 },
+            refs: {},
             context: {}
         };
 
