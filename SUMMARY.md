@@ -1,7 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [Why hocompose?](docs/introduction.md)
+* [Why hocompose?](docs/why-hocompose.md)
 * [Behaviours](docs/behaviours/index.md)
    * [Overview](docs/behaviours/overview.md)
    * [API](docs/behaviours/api.md)
