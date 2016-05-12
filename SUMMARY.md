@@ -6,5 +6,4 @@
    * [Overview](docs/behaviours/overview.md)
    * [API](docs/behaviours/api.md)
 * [Examples](docs/examples/index.md)
-   * [Event Subscription](docs/examples/event-subscription.md/Event subscribtion)
 
