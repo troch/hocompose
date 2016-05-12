@@ -7,4 +7,5 @@
    * [API](docs/behaviours/api.md)
 * [Examples](docs/examples/index.md)
    * [Event subscription](docs/examples/event-subscription.md)
+   * Event handlers
 
