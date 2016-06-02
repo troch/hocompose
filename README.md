@@ -1,5 +1,8 @@
 # hocompose
 
+[![npm version](https://badge.fury.io/js/hocompose.svg)](https://badge.fury.io/js/hocompose)
+[![Build Status](https://travis-ci.org/troch/hocompose.svg?branch=master)](https://travis-ci.org/troch/hocompose)
+
 > A library to compose higher-order components into one.
 
 __Note: 1.0.0 is a rewrite__
