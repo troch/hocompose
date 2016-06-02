@@ -2,33 +2,47 @@ export var isFunc = function isFunc(prop) {
     return typeof prop === 'function';
 };
 
-export var collect = function collect(prop, behaviours) {
-    return behaviours.reduce(function (acc, behaviour) {
-        return behaviour[prop] ? babelHelpers.extends({}, acc, behaviour[prop]) : acc;
+export var pluckFunc = function pluckFunc(behaviours) {
+    return function (methodName) {
+        return behaviours.filter(function (behaviour) {
+            return isFunc(behaviour[methodName]);
+        }).map(function (behaviour) {
+            return behaviour[methodName];
+        });
+    };
+};
+
+export var reduce = function reduce(list) {
+    return list.reduce(function (acc, obj) {
+        return babelHelpers.extends({}, acc, obj);
     }, {});
 };
 
-export var onConstruct = function onConstruct(behaviours, model) {
+export var collect = function collect(prop, list) {
+    return reduce(list.map(function (item) {
+        return item[prop] || {};
+    }));
+};
+
+export var resolveBehaviours = function resolveBehaviours(behaviours, model) {
     return behaviours.map(function (behaviour) {
-        if (isFunc(behaviour.onConstruct)) {
-            return {
-                state: behaviour.onConstruct(model)
-            };
+        if (typeof behaviour === 'function') {
+            return behaviour(model) || {};
         }
-        return {};
+        return behaviour;
     });
 };
 
-export var onMount = function onMount(behaviours, model) {
+export var componentDidMount = function componentDidMount(behaviours, model) {
     return behaviours.map(function (behaviour) {
-        if (isFunc(behaviour.onMount)) {
-            var onUnmount = behaviour.onMount(model);
-            if (isFunc(onUnmount)) {
-                return onUnmount;
+        if (isFunc(behaviour.componentDidMount)) {
+            var teardown = behaviour.componentDidMount(model);
+            if (isFunc(teardown)) {
+                return teardown;
             }
         }
-        if (isFunc(behaviour.onUnmount)) {
-            return behaviour.onUnmount;
+        if (isFunc(behaviour.componentWillUnmount)) {
+            return behaviour.componentWillUnmount;
         }
     }).filter(isFunc);
 };
@@ -46,15 +60,8 @@ export var buildModel = function buildModel(_ref) {
     var props = _ref.props;
     var state = _ref.state;
     var context = _ref.context;
-    return { props: props, state: state, context: context };
-};
-
-export var omitPrivate = function omitPrivate(state) {
-    return Object.keys(state).filter(function (key) {
-        return !/^_/.test(key);
-    }).reduce(function (acc, key) {
-        return babelHelpers.extends({}, acc, babelHelpers.defineProperty({}, key, state[key]));
-    }, {});
+    var extraValues = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    return babelHelpers.extends({ props: props, state: state, context: context }, extraValues);
 };
 
 export var shallowEquals = function shallowEquals(left, right) {

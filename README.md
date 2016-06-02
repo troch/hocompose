@@ -2,6 +2,7 @@
 
 > A library to compose higher-order components into one.
 
+__Note: 1.0.0 is a rewrite__
 
 ## Higher-order components
 

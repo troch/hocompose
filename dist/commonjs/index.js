@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.pure = undefined;
+exports.getContext = exports.setContext = exports.pure = undefined;
 
 var _hoc = require('./hoc');
 
@@ -15,3 +15,5 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = _hoc2.default;
 exports.pure = _behaviours.pure;
+exports.setContext = _behaviours.setContext;
+exports.getContext = _behaviours.getContext;

@@ -10,12 +10,11 @@ var _utils = require('./utils');
 var pure = exports.pure = {
     name: 'pure',
 
-    shouldUpdate: function shouldUpdate(model) {
+    shouldComponentUpdate: function shouldComponentUpdate(model) {
         var props = model.props;
         var nextProps = model.nextProps;
-
-        var state = (0, _utils.omitPrivate)(model.state);
-        var nextState = (0, _utils.omitPrivate)(model.nextState);
+        var state = model.state;
+        var nextState = model.nextState;
 
         return !(0, _utils.shallowEquals)(props, nextProps) || !(0, _utils.shallowEquals)(state, nextState);
     }

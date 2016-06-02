@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { collect, onConstruct, onMount, buildDisplayName, buildModel, isFunc, omitPrivate } from './utils';
+import { reduce, collect, componentDidMount as _componentDidMount, buildDisplayName, buildModel, pluckFunc, resolveBehaviours } from './utils';
 
-var hocompose = function hocompose(behaviours) {
+var compose = function compose(behaviours) {
     return function (BaseComponent) {
+        var resolvedBehaviours = undefined;
+
         var Hocompose = (function (_React$Component) {
             babelHelpers.inherits(Hocompose, _React$Component);
 
@@ -14,85 +16,96 @@ var hocompose = function hocompose(behaviours) {
 
                 _this.context = context;
                 var model = { props: props, context: context };
-                _this.state = collect('state', onConstruct(behaviours, model));
+
+                resolvedBehaviours = resolveBehaviours(behaviours, model);
+
+                var get = pluckFunc(resolvedBehaviours);
+                _this.handlers = {
+                    getChildContext: get('getChildContext'),
+                    shouldComponentUpdate: get('shouldComponentUpdate'),
+                    componentWillUpdate: get('componentWillUpdate'),
+                    componentDidUpdate: get('componentDidUpdate'),
+                    componentWillReceiveProps: get('componentWillReceiveProps')
+                };
+                _this.state = collect('state', resolvedBehaviours);
                 return _this;
             }
 
             babelHelpers.createClass(Hocompose, [{
                 key: 'getChildContext',
                 value: function getChildContext() {
-                    var _this2 = this;
+                    var model = buildModel(this);
 
-                    var getChildContextResults = behaviours.filter(function (behaviours) {
-                        return isFunc(behaviours.getChildContext);
-                    }).map(function (behaviours) {
-                        return { getChildContext: behaviours.getChildContext(_this2.props) };
+                    var getChildContextResults = this.handlers.getChildContext.map(function (_) {
+                        return _(model);
                     });
 
-                    return collect('getChildContext', getChildContextResults);
+                    return reduce(getChildContextResults);
                 }
             }, {
                 key: 'componentDidMount',
                 value: function componentDidMount() {
                     var model = buildModel(this);
-                    this.unmountHandlers = onMount(behaviours, model, this.setState);
+
+                    this.unmountHandlers = _componentDidMount(resolvedBehaviours, model, this.setState);
                 }
             }, {
                 key: 'componentWillUnmount',
                 value: function componentWillUnmount() {
                     var model = buildModel(this);
-                    this.unmountHandlers.reverse().forEach(function (onUnmount) {
-                        return onUnmount(model);
+
+                    this.unmountHandlers.reverse().forEach(function (_) {
+                        return _(model);
                     });
                 }
             }, {
                 key: 'shouldComponentUpdate',
                 value: function shouldComponentUpdate(nextProps, nextState) {
-                    var shouldUpdateHandlers = behaviours.filter(function (_) {
-                        return isFunc(_.shouldUpdate);
-                    });
-
-                    if (shouldUpdateHandlers.length === 0) {
+                    if (this.handlers.shouldComponentUpdate.length === 0) {
                         return true;
                     }
 
-                    var model = {
-                        props: this.props,
-                        state: this.state,
-                        nextProps: nextProps,
-                        nextState: nextState
-                    };
+                    var model = buildModel(this, { nextProps: nextProps, nextState: nextState });
 
-                    return shouldUpdateHandlers.map(function (_) {
+                    return this.handlers.shouldComponentUpdate.some(function (_) {
+                        return _(model) === true;
+                    });
+                }
+            }, {
+                key: 'componentWillReceiveProps',
+                value: function componentWillReceiveProps(nextProps) {
+                    var _this2 = this;
+
+                    var model = buildModel(this, { nextProps: nextProps });
+
+                    return this.handlers.componentWillReceiveProps.forEach(function (_) {
+                        return _(model, _this2.setState);
+                    });
+                }
+            }, {
+                key: 'componentWillUpdate',
+                value: function componentWillUpdate(nextProps, nextState) {
+                    var model = buildModel(this, { nextProps: nextProps, nextState: nextState });
+
+                    return this.handlers.componentWillUpdate.forEach(function (_) {
                         return _(model);
-                    }).some(function (_) {
-                        return _ === true;
                     });
                 }
             }, {
                 key: 'componentDidUpdate',
-                value: function componentDidUpdate(nextProps) {
+                value: function componentDidUpdate(prevProps, prevState) {
                     var _this3 = this;
 
-                    var model = {
-                        props: this.props,
-                        state: this.state,
-                        context: this.context,
-                        nextProps: nextProps
-                    };
+                    var model = buildModel(this, { prevProps: prevProps, prevState: prevState });
 
-                    return behaviours.filter(function (_) {
-                        return isFunc(_.onUpdate);
-                    }).forEach(function (_) {
+                    return this.handlers.componentDidUpdate.forEach(function (_) {
                         return _(model, _this3.setState);
                     });
                 }
             }, {
                 key: 'render',
                 value: function render() {
-                    var stateToProps = omitPrivate(this.state);
-
-                    return React.createElement(BaseComponent, babelHelpers.extends({}, this.props, stateToProps));
+                    return React.createElement(BaseComponent, babelHelpers.extends({}, this.props, this.state));
                 }
             }]);
             return Hocompose;
@@ -101,9 +114,11 @@ var hocompose = function hocompose(behaviours) {
         Hocompose.displayName = buildDisplayName(behaviours, BaseComponent);
         Hocompose.contextTypes = collect('contextTypes', behaviours);
         Hocompose.childContextTypes = collect('childContextTypes', behaviours);
+        Hocompose.defaultProps = collect('defaultProps', behaviours.concat(BaseComponent));
+        Hocompose.propTypes = collect('propTypes', behaviours.concat(BaseComponent));
 
         return Hocompose;
     };
 };
 
-export default hocompose;
+export default compose;

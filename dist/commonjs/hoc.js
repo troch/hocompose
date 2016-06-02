@@ -22,8 +22,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var hocompose = function hocompose(behaviours) {
+var compose = function compose(behaviours) {
     return function (BaseComponent) {
+        var resolvedBehaviours = undefined;
+
         var Hocompose = (function (_React$Component) {
             _inherits(Hocompose, _React$Component);
 
@@ -36,85 +38,96 @@ var hocompose = function hocompose(behaviours) {
 
                 _this.context = context;
                 var model = { props: props, context: context };
-                _this.state = (0, _utils.collect)('state', (0, _utils.onConstruct)(behaviours, model));
+
+                resolvedBehaviours = (0, _utils.resolveBehaviours)(behaviours, model);
+
+                var get = (0, _utils.pluckFunc)(resolvedBehaviours);
+                _this.handlers = {
+                    getChildContext: get('getChildContext'),
+                    shouldComponentUpdate: get('shouldComponentUpdate'),
+                    componentWillUpdate: get('componentWillUpdate'),
+                    componentDidUpdate: get('componentDidUpdate'),
+                    componentWillReceiveProps: get('componentWillReceiveProps')
+                };
+                _this.state = (0, _utils.collect)('state', resolvedBehaviours);
                 return _this;
             }
 
             _createClass(Hocompose, [{
                 key: 'getChildContext',
                 value: function getChildContext() {
-                    var _this2 = this;
+                    var model = (0, _utils.buildModel)(this);
 
-                    var getChildContextResults = behaviours.filter(function (behaviours) {
-                        return (0, _utils.isFunc)(behaviours.getChildContext);
-                    }).map(function (behaviours) {
-                        return { getChildContext: behaviours.getChildContext(_this2.props) };
+                    var getChildContextResults = this.handlers.getChildContext.map(function (_) {
+                        return _(model);
                     });
 
-                    return (0, _utils.collect)('getChildContext', getChildContextResults);
+                    return (0, _utils.reduce)(getChildContextResults);
                 }
             }, {
                 key: 'componentDidMount',
                 value: function componentDidMount() {
                     var model = (0, _utils.buildModel)(this);
-                    this.unmountHandlers = (0, _utils.onMount)(behaviours, model, this.setState);
+
+                    this.unmountHandlers = (0, _utils.componentDidMount)(resolvedBehaviours, model, this.setState);
                 }
             }, {
                 key: 'componentWillUnmount',
                 value: function componentWillUnmount() {
                     var model = (0, _utils.buildModel)(this);
-                    this.unmountHandlers.reverse().forEach(function (onUnmount) {
-                        return onUnmount(model);
+
+                    this.unmountHandlers.reverse().forEach(function (_) {
+                        return _(model);
                     });
                 }
             }, {
                 key: 'shouldComponentUpdate',
                 value: function shouldComponentUpdate(nextProps, nextState) {
-                    var shouldUpdateHandlers = behaviours.filter(function (_) {
-                        return (0, _utils.isFunc)(_.shouldUpdate);
-                    });
-
-                    if (shouldUpdateHandlers.length === 0) {
+                    if (this.handlers.shouldComponentUpdate.length === 0) {
                         return true;
                     }
 
-                    var model = {
-                        props: this.props,
-                        state: this.state,
-                        nextProps: nextProps,
-                        nextState: nextState
-                    };
+                    var model = (0, _utils.buildModel)(this, { nextProps: nextProps, nextState: nextState });
 
-                    return shouldUpdateHandlers.map(function (_) {
+                    return this.handlers.shouldComponentUpdate.some(function (_) {
+                        return _(model) === true;
+                    });
+                }
+            }, {
+                key: 'componentWillReceiveProps',
+                value: function componentWillReceiveProps(nextProps) {
+                    var _this2 = this;
+
+                    var model = (0, _utils.buildModel)(this, { nextProps: nextProps });
+
+                    return this.handlers.componentWillReceiveProps.forEach(function (_) {
+                        return _(model, _this2.setState);
+                    });
+                }
+            }, {
+                key: 'componentWillUpdate',
+                value: function componentWillUpdate(nextProps, nextState) {
+                    var model = (0, _utils.buildModel)(this, { nextProps: nextProps, nextState: nextState });
+
+                    return this.handlers.componentWillUpdate.forEach(function (_) {
                         return _(model);
-                    }).some(function (_) {
-                        return _ === true;
                     });
                 }
             }, {
                 key: 'componentDidUpdate',
-                value: function componentDidUpdate(nextProps) {
+                value: function componentDidUpdate(prevProps, prevState) {
                     var _this3 = this;
 
-                    var model = {
-                        props: this.props,
-                        state: this.state,
-                        context: this.context,
-                        nextProps: nextProps
-                    };
+                    var model = (0, _utils.buildModel)(this, { prevProps: prevProps, prevState: prevState });
 
-                    return behaviours.filter(function (_) {
-                        return (0, _utils.isFunc)(_.onUpdate);
-                    }).forEach(function (_) {
+                    return this.handlers.componentDidUpdate.forEach(function (_) {
                         return _(model, _this3.setState);
                     });
                 }
             }, {
                 key: 'render',
                 value: function render() {
-                    var stateToProps = (0, _utils.omitPrivate)(this.state);
-
-                    return React.createElement(BaseComponent, _extends({}, this.props, stateToProps));
+                    return React.createElement(BaseComponent, _extends({}, this.props, this.state));
                 }
             }]);
 
@@ -124,9 +137,11 @@ var hocompose = function hocompose(behaviours) {
         Hocompose.displayName = (0, _utils.buildDisplayName)(behaviours, BaseComponent);
         Hocompose.contextTypes = (0, _utils.collect)('contextTypes', behaviours);
         Hocompose.childContextTypes = (0, _utils.collect)('childContextTypes', behaviours);
+        Hocompose.defaultProps = (0, _utils.collect)('defaultProps', behaviours.concat(BaseComponent));
+        Hocompose.propTypes = (0, _utils.collect)('propTypes', behaviours.concat(BaseComponent));
 
         return Hocompose;
     };
 };
 
-exports.default = hocompose;
+exports.default = compose;

@@ -6,39 +6,51 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var isFunc = exports.isFunc = function isFunc(prop) {
     return typeof prop === 'function';
 };
 
-var collect = exports.collect = function collect(prop, behaviours) {
-    return behaviours.reduce(function (acc, behaviour) {
-        return behaviour[prop] ? _extends({}, acc, behaviour[prop]) : acc;
+var pluckFunc = exports.pluckFunc = function pluckFunc(behaviours) {
+    return function (methodName) {
+        return behaviours.filter(function (behaviour) {
+            return isFunc(behaviour[methodName]);
+        }).map(function (behaviour) {
+            return behaviour[methodName];
+        });
+    };
+};
+
+var reduce = exports.reduce = function reduce(list) {
+    return list.reduce(function (acc, obj) {
+        return _extends({}, acc, obj);
     }, {});
 };
 
-var onConstruct = exports.onConstruct = function onConstruct(behaviours, model) {
+var collect = exports.collect = function collect(prop, list) {
+    return reduce(list.map(function (item) {
+        return item[prop] || {};
+    }));
+};
+
+var resolveBehaviours = exports.resolveBehaviours = function resolveBehaviours(behaviours, model) {
     return behaviours.map(function (behaviour) {
-        if (isFunc(behaviour.onConstruct)) {
-            return {
-                state: behaviour.onConstruct(model)
-            };
+        if (typeof behaviour === 'function') {
+            return behaviour(model) || {};
         }
-        return {};
+        return behaviour;
     });
 };
 
-var onMount = exports.onMount = function onMount(behaviours, model) {
+var componentDidMount = exports.componentDidMount = function componentDidMount(behaviours, model) {
     return behaviours.map(function (behaviour) {
-        if (isFunc(behaviour.onMount)) {
-            var onUnmount = behaviour.onMount(model);
-            if (isFunc(onUnmount)) {
-                return onUnmount;
+        if (isFunc(behaviour.componentDidMount)) {
+            var teardown = behaviour.componentDidMount(model);
+            if (isFunc(teardown)) {
+                return teardown;
             }
         }
-        if (isFunc(behaviour.onUnmount)) {
-            return behaviour.onUnmount;
+        if (isFunc(behaviour.componentWillUnmount)) {
+            return behaviour.componentWillUnmount;
         }
     }).filter(isFunc);
 };
@@ -56,15 +68,8 @@ var buildModel = exports.buildModel = function buildModel(_ref) {
     var props = _ref.props;
     var state = _ref.state;
     var context = _ref.context;
-    return { props: props, state: state, context: context };
-};
-
-var omitPrivate = exports.omitPrivate = function omitPrivate(state) {
-    return Object.keys(state).filter(function (key) {
-        return !/^_/.test(key);
-    }).reduce(function (acc, key) {
-        return _extends({}, acc, _defineProperty({}, key, state[key]));
-    }, {});
+    var extraValues = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    return _extends({ props: props, state: state, context: context }, extraValues);
 };
 
 var shallowEquals = exports.shallowEquals = function shallowEquals(left, right) {

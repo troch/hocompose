@@ -1,6 +1,6 @@
 {
   "name": "hocompose",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Using Higher-Order Components in React is great for composition: they allow to decouple rendering logic from component lifecycle.",
   "main": "dist/commonjs/index.js",
   "jsnext:main": "dist/es/index.js",

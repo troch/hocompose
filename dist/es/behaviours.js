@@ -1,14 +1,13 @@
-import { shallowEquals, omitPrivate } from './utils';
+import { shallowEquals } from './utils';
 
 export var pure = {
     name: 'pure',
 
-    shouldUpdate: function shouldUpdate(model) {
+    shouldComponentUpdate: function shouldComponentUpdate(model) {
         var props = model.props;
         var nextProps = model.nextProps;
-
-        var state = omitPrivate(model.state);
-        var nextState = omitPrivate(model.nextState);
+        var state = model.state;
+        var nextState = model.nextState;
 
         return !shallowEquals(props, nextProps) || !shallowEquals(state, nextState);
     }
