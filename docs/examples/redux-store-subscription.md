@@ -10,7 +10,7 @@ const reduxConnectBehaviour = (initialModel) => {
 
     return {
         state: initialModel.context.store.getState(),
-        onMount: (model, setState) => {
+        componentDidMount: (model, setState) => {
             const onStoreUpdate = () => setState(store.getState());
             
             return store.subscribe(onStoreUpdate);

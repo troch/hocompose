@@ -3,7 +3,7 @@ import { shallowEquals } from './utils';
 export const pure = {
     name: 'pure',
 
-    shouldUpdate(model) {
+    shouldComponentUpdate(model) {
         const { props, nextProps, state, nextState } = model;
 
         return !shallowEquals(props, nextProps) || !shallowEquals(state, nextState);

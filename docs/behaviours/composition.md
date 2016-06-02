@@ -13,6 +13,6 @@ const MyEnhancedComponent = compose([ behaviour1, behaviour2 ])(MyBaseComponent)
 ## Order
 
 The order of the behaviours matter:
-- All life cyle functions except `onUnmount` will be invoked in the order they are added (from left to right above)
-- `onUnmount` handlers will be invoked in the reverse order behaviours are added (right to left)
-- When at least one `shouldUpdate` handler is defined, it only needs one of them to return `true` for an update to proceed
+- All life cyle functions except `componentWillUnmount` will be invoked in the order they are added (from left to right above)
+- `componentWillUnmount` handlers will be invoked in the reverse order behaviours are added (right to left)
+- When at least one `shouldComponentUpdate` handler is defined, it only needs one of them to return `true` for an update to proceed

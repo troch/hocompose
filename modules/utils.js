@@ -20,17 +20,17 @@ export const resolveBehaviours = (behaviours, model) =>
             return behaviour;
         });
 
-export const onMount = (behaviours, model) =>
+export const componentDidMount = (behaviours, model) =>
     behaviours
         .map((behaviour) => {
-            if (isFunc(behaviour.onMount)) {
-                const onUnmount = behaviour.onMount(model);
-                if (isFunc(onUnmount)) {
-                    return onUnmount;
+            if (isFunc(behaviour.componentDidMount)) {
+                const teardown = behaviour.componentDidMount(model);
+                if (isFunc(teardown)) {
+                    return teardown;
                 }
             }
-            if (isFunc(behaviour.onUnmount)) {
-                return behaviour.onUnmount;
+            if (isFunc(behaviour.componentWillUnmount)) {
+                return behaviour.componentWillUnmount;
             }
         })
         .filter(isFunc);
@@ -45,8 +45,8 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
     return `Hocompose[${joinedBehaviourNames}](${baseComponentDisplayName})`;
 };
 
-export const buildModel = ({ props, state, context, refs }, extraValues = {}) =>
-    ({ props, state, context, refs, ...extraValues });
+export const buildModel = ({ props, state, context }, extraValues = {}) =>
+    ({ props, state, context, ...extraValues });
 
 export const shallowEquals = (left, right) =>
     Object.keys(left).length === Object.keys(right).length &&

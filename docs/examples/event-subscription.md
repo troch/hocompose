@@ -2,7 +2,7 @@
 
 The following example listens to window re-size events. `width` and `height` will be passed down as properties.
 
-The unsubscribing function returned by `onMount` will be executed when unmounting.
+The unsubscribing function returned by `componentDidMount` will be executed when unmounting.
 
 ```js
 const windowResize = (model) => {
@@ -13,7 +13,7 @@ const windowResize = (model) => {
 
     return {
         state: buildState(),
-        onMount(model, setState) {
+        componentDidMount(model, setState) {
             const resizeHandler = () => setState(buildState());
             
             window.addEventListener('resize', resizeHandler);

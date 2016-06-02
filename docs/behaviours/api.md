@@ -12,17 +12,17 @@ A behaviour is a function returning an object defining its life cycle methods. I
 
 ## Life cycle methods and properties
 
-A behaviour factory function can return an object defining life cycle methods and properties. Each method takes a `model` as first argument: model contains `props`, `state`, `context` and `refs` as a base.
+A behaviour factory function can return an object defining life cycle methods and properties. Each method takes a `model` as first argument: model contains `props`, `state` and `context` as a base.
 
 | React | Hocompose | Model |
-| -- | -- |
+| -- | -- | -- |
 | `getInitialState()` | `state` property |  |
-| `componentDidMount()` | `onMount(model, setState)` | `props`, `state, `refs`, `context` |
-| `componentWillReceiveProps(nextProps)` | `onReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `refs`, `context`
-| `shouldComponentUpdate(nextProps, nextState)` | `shouldUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `refs`,  `context` |
-| `componentWillUpdate(nextProps, nextState)` | `beforeUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `refs`, `context` |
-| `componentDidUpdate(prevProps, prevState)` | `afterUpdate(model, setState)` | `props`, `prevProps`, `state`, `prevState`, `refs`, `context` |
-| `getChildContext()` | `getChildContext(model)` | `props`, `state, `refs`, `context`
+| `componentDidMount()` | `componentDidMount(model, setState)` | `props`, `state, `context` |
+| `componentWillReceiveProps(nextProps)` | `componentWillReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context`
+| `shouldComponentUpdate(nextProps, nextState)` | `shouldComponentUpdate(model)` | `props`, `nextProps`, `state`, `nextState`,  `context` |
+| `componentWillUpdate(nextProps, nextState)` | `componentWillUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `context` |
+| `componentDidUpdate(prevProps, prevState)` | `componentDidUpdate(model, setState)` | `props`, `prevProps`, `state`, `prevState`, `context` |
+| `getChildContext()` | `getChildContext(model)` | `props`, `state, `context`
 
 ## Static methods and properties
 
