@@ -20,8 +20,6 @@ Nesting rendering logic makes total sense, this is how one builds a UI consistin
 
 This is what __hocompose__ enables: composing behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
 
-__hocompose__ is thisless.
-
 
 ## Installation
 
@@ -29,6 +27,11 @@ __hocompose__ is thisless.
 npm install --save hocompose
 ```
 
+## Key concepts
+
+- Only functions with closures, __hocompose__ is thisless
+- State values are serialised to props
+- `componentWillMount` functions can return `componentWillUnmount` functions
 
 ## Docs
 
