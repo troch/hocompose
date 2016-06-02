@@ -16,13 +16,13 @@ A behaviour factory function can return an object defining life cycle methods an
 
 | React | Hocompose | Model |
 | -- | -- | -- |
-| `getInitialState()` | `state` property |  |
-| `componentDidMount()` | `componentDidMount(model, setState)` | `props`, `state, `context` |
+| `getInitialState()` | `state` property | |
+| `componentDidMount()` | `componentDidMount(model, setState)` | `props`, `state`, `context` |
 | `componentWillReceiveProps(nextProps)` | `componentWillReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context` |
 | `shouldComponentUpdate(nextProps, nextState)` | `shouldComponentUpdate(model)` | `props`, `nextProps`, `state`, `nextState`,  `context` |
 | `componentWillUpdate(nextProps, nextState)` | `componentWillUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `context` |
 | `componentDidUpdate(prevProps, prevState)` | `componentDidUpdate(model, setState)` | `props`, `prevProps`, `state`, `prevState`, `context` |
-| `getChildContext()` | `getChildContext(model)` | `props`, `state, `context` |
+| `getChildContext()` | `getChildContext(model)` | `props`, `state`, `context` |
 
 ## Static methods and properties
 
