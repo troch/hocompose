@@ -7,10 +7,6 @@
 
 Using Higher-Order Components (HOCs) in React is great for composition. They allow to decouple rendering logic from life-cycle logic. HOCs are good for extracting logic from components, so it can be applied to other components without duplicating code.
 
-In general, there are two types of higher-order components:
-- Some will specify life-cycle methods and render DOM element, wrapping a base component
-- Some will only specify life-cycle methods to add some behaviour to a base component
-
 Sharing a specific component behaviour between many components is easy with higher-order componentss. However, because of nesting, adding multiple behaviours to a component is done at the expense of component instances.
 
 
