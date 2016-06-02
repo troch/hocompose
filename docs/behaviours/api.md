@@ -7,7 +7,7 @@ __hocompose__ methods are named differently than the React ones to avoid any con
 A behaviour is a function returning an object defining its life cycle methods. It is being invoked when a component is instantiated, and is called with an initial model containing `props` and `context`.
 
 | React | Hocompose | Model |
-| -- | -- |
+| -- | -- | -- |
 | `componentWillMount()` or class constructor | Factory function `fn(model)` | `props`, `context` |
 
 ## Life cycle methods and properties
@@ -18,11 +18,11 @@ A behaviour factory function can return an object defining life cycle methods an
 | -- | -- | -- |
 | `getInitialState()` | `state` property |  |
 | `componentDidMount()` | `componentDidMount(model, setState)` | `props`, `state, `context` |
-| `componentWillReceiveProps(nextProps)` | `componentWillReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context`
+| `componentWillReceiveProps(nextProps)` | `componentWillReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context` |
 | `shouldComponentUpdate(nextProps, nextState)` | `shouldComponentUpdate(model)` | `props`, `nextProps`, `state`, `nextState`,  `context` |
 | `componentWillUpdate(nextProps, nextState)` | `componentWillUpdate(model)` | `props`, `nextProps`, `state`, `nextState`, `context` |
 | `componentDidUpdate(prevProps, prevState)` | `componentDidUpdate(model, setState)` | `props`, `prevProps`, `state`, `prevState`, `context` |
-| `getChildContext()` | `getChildContext(model)` | `props`, `state, `context`
+| `getChildContext()` | `getChildContext(model)` | `props`, `state, `context` |
 
 ## Static methods and properties
 
@@ -34,4 +34,4 @@ Static methods and properties need to be set on the factory function itself.
 | `defaultProps` | `defaultProps` |
 | `propTypes` | `propTypes` |
 | `contextTypes` | `contextTypes` |
-| `displayName` | `name` ||
+| `displayName` | `name` |
