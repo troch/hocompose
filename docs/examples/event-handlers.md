@@ -18,7 +18,7 @@ const Input = (props) => {
     return <input type='text' value={ props.value } onChange={ props.changeHandler } />;
 }
 
-export default compose([ eventHandlersBehaviour ])(Input);
+export default compose(eventHandlersBehaviour)(Input);
 ```
 
 This component would be used as follow:

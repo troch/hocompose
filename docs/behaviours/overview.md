@@ -10,7 +10,7 @@ Behaviours can be defined as:
 
 All methods on hocompose behaviours are _thisless_, and hocompose enforces the use of closures rather than relying on context.
 
-For example, __hocompose__ allows you to return an `componentWillUnmount` (_`componentWillUnmount`_) method from an `componentDidMount` (_`componentDidMount`_) method. It is very useful when subscribing to events or other data sources after a component was mounted, and then cleaning up any subscription before unmounting it.
+For example, __hocompose__ allows `componentWillMount` and `componentDidMount` to return a function each. Those functions will be executed when your component will unmount (`componentWillUnmount`). It is very useful when subscribing to events or other data sources after a component was mounted, and then cleaning up any subscription before unmounting it.
 
 ## State as props
 

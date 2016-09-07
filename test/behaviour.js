@@ -4,7 +4,7 @@ import { resolveBehaviours, collect } from '../modules/utils';
 import { render } from 'enzyme';
 import React from 'react';
 
-describe('Behaviour as factory', () => {
+describe('Behaviour', () => {
     const customBehaviour1 = () => ({
         state: {
             message: 'Hello'

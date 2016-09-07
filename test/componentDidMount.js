@@ -10,11 +10,13 @@ describe('componentDidMount', () => {
     }
 
     it('should be called with model when component did mount', () => {
+        const componentWillMount = spy();
         const componentDidMount = spy();
         const customBehaviour = () => ({
             state: {
                 a: 1
             },
+            componentWillMount,
             componentDidMount
         });
 
@@ -26,6 +28,7 @@ describe('componentDidMount', () => {
             context: {}
         };
 
+        expect(componentWillMount).to.have.been.calledWith(model);
         expect(componentDidMount).to.have.been.calledWith(model);
     });
 

@@ -8,7 +8,7 @@ A behaviour is a function returning an object defining its life cycle methods. I
 
 | React | Hocompose | Model |
 | --- | --- | --- |
-| `componentWillMount()` or class constructor | Factory function `fn(model)` | `props`, `context` |
+| class constructor | Factory function `fn(model)` | `props`, `context` |
 
 ## Life cycle methods and properties
 
@@ -17,6 +17,7 @@ A behaviour factory function can return an object defining life cycle methods an
 | React | Hocompose | Model |
 | --- | --- | --- |
 | `getInitialState()` | `state` property | |
+| `componentWillMount()` | `componentWillMount(model, setState)` | `props`, `state`, `context` |
 | `componentDidMount()` | `componentDidMount(model, setState)` | `props`, `state`, `context` |
 | `componentWillReceiveProps(nextProps)` | `componentWillReceiveProps(model, setState)` | `props`, `nextProps`, `state`, `context` |
 | `shouldComponentUpdate(nextProps, nextState)` | `shouldComponentUpdate(model)` | `props`, `nextProps`, `state`, `nextState`,  `context` |

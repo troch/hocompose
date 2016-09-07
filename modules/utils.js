@@ -20,19 +20,29 @@ export const resolveBehaviours = (behaviours, model) =>
             return behaviour;
         });
 
-export const componentDidMount = (behaviours, model) =>
+
+export const componentMounting = (behaviours, model) =>
     behaviours
         .map((behaviour) => {
+            const results = [];
+
+            if (isFunc(behaviour.componentWillMount)) {
+                results.push(behaviour.componentWillMount(model));
+            }
             if (isFunc(behaviour.componentDidMount)) {
-                const teardown = behaviour.componentDidMount(model);
-                if (isFunc(teardown)) {
-                    return teardown;
-                }
+                results.push(behaviour.componentDidMount(model));
+            }
+
+            const teardown = results.filter(isFunc);
+
+            if (teardown.length) {
+                return teardown;
             }
             if (isFunc(behaviour.componentWillUnmount)) {
                 return behaviour.componentWillUnmount;
             }
         })
+        .reduce((acc, item) => acc.concat(item), [])
         .filter(isFunc);
 
 
@@ -47,7 +57,3 @@ export const buildDisplayName = (behaviours, BaseComponent) => {
 
 export const buildModel = ({ props, state, context }, extraValues = {}) =>
     ({ props, state, context, ...extraValues });
-
-export const shallowEquals = (left, right) =>
-    Object.keys(left).length === Object.keys(right).length &&
-    Object.keys(left).every(leftKey => left[leftKey] === right[rightKey]);

@@ -7,7 +7,7 @@ import { compose } from 'hocompose`;
 import { behaviour1, behaviour2 } from './my-behaviours';
 import BaseComponent from './my-base-component';
 
-const MyEnhancedComponent = compose([ behaviour1, behaviour2 ])(MyBaseComponent);
+const MyEnhancedComponent = compose(behaviour1, behaviour2)(MyBaseComponent);
 ```
 
 ## Order

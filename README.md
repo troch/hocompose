@@ -21,17 +21,24 @@ Nesting rendering logic makes total sense, this is how one builds a UI consistin
 This is what __hocompose__ enables: composing behaviours together in only one higher-order component. Think of it as the best of higher-order components, decorators and mixins.
 
 
-## Installation
+## Installation and usage
 
 ```sh
 npm install --save hocompose
+```
+
+```js
+import compose from 'hocompose';
+import pure from 'hocompose/behaviours/pure';
+import setContext from 'hocompose/behaviours/setContext';
+import getContext from 'hocompose/behaviours/getContext';
 ```
 
 ## Key concepts
 
 - Only functions with closures, __hocompose__ is thisless
 - State values are serialised to props
-- `componentWillMount` functions can return `componentWillUnmount` functions
+- `componentWillMount` and `componentDidMount` functions can both return functions executed in `componentWillUnmount`
 
 ## Docs
 
@@ -43,3 +50,35 @@ npm install --save hocompose
    * [Event subscription](docs/examples/event-subscription.md)
    * [Event handlers](docs/examples/event-handlers.md)
    * [Redux store subscription](docs/examples/redux-store-subscription.md)
+
+
+## Quick example
+
+```js
+import React from 'react';
+import compose from 'hocompose';
+import pure from 'hocompose/behaviours/pure';
+
+const windowSizeBehaviour = (model) => {
+    const buildState = () => ({
+        width: window.innerWidth,
+        height: window.innerHeight
+    });
+
+    return {
+        state: buildState(),
+        componentDidMount(model, setState) {
+            const resizeHandler = () => setState(buildState());
+            
+            window.addEventListener('resize', resizeHandler);
+
+            // Return an unmount function
+            return () => window.removeEventListener('resize', resizeHandler);
+        }
+    };
+};
+
+const MyView = (props) => <div>This is my view, { props.width }x{ props.height }</div>;
+
+export default compose(pure, windowSizeBehaviour)(MyView);
+```
